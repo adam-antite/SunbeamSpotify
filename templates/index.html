@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div>
+        {% if message %}
+            <div class="alert alert-danger" role="alert"> {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endif %}
+        <div class="jumbotron">
+            {% if request.session.access_token %}
+                <h2>Success! Spotify account connected.</h2>
+                <p class="lead">UNDER CONSTRUCTION</p>
+            {% else %}
+                <h2>Shuffle</h2>
+                <p class="lead">This website will allow you to shuffle your playlists with a randomizing algorithm that
+                    shuffles much better than the garbage "shuffle" algorithm Spotify uses by default.</p>
+                <a class="btn btn-lg btn-primary" href="{% url 'authorize' %}" role="button">Login using Spotify
+                    &raquo;</a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
