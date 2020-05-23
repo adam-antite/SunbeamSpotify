@@ -41,8 +41,9 @@ def authorize(request):
 
 
 def login(request):
+    # Return to homepage if user declines authorization
     if request.GET.__contains__('error'):
-        return render(request, 'index.html', {'message': 'Error connecting Spotify account, please try again.'})
+        return render(request, 'index.html', {'error_message': 'Error connecting Spotify account, please try again.'})
     else:
         authorization_code = request.GET.__getitem__('code')
         params = {
@@ -55,14 +56,25 @@ def login(request):
 
         response = requests.post('https://accounts.spotify.com/api/token', data=params)
         if response.status_code == 200:
+            # parse response text into addressable JSON
             response_json = json.loads(response.text)
+
+            # write tokens to cookie storage
             request.session['access_token'] = response_json['access_token']
             request.session['refresh_token'] = response_json['refresh_token']
+
+            # get username from API and write to cookie storage
+            header = {'Authorization': 'Authorization: Bearer ' + request.session['access_token']}
+            user_response = requests.get('https://api.spotify.com/v1/me', headers=header)
+            user_response_json = json.loads(user_response.text)
+            request.session['username'] = user_response_json['display_name']
             return redirect(index)
         else:
+            # error handling
             return render(request, 'index.html', {'message': 'Error connecting Spotify account, please try again.'})
 
 
 def logout(request):
+    # deletes the storage cookie
     request.session.flush()
-    return redirect(index)
+    return render(request, 'index.html', {'success_message': 'Logged out successfully.'})

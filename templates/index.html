@@ -2,8 +2,15 @@
 
 {% block content %}
     <div>
-        {% if message %}
-            <div class="alert alert-danger" role="alert"> {{ message }}
+        {% if error_message %}
+            <div class="alert alert-danger" role="alert"> {{ error_message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endif %}
+        {% if success_message %}
+            <div class="alert alert-success" role="alert"> {{ success_message }}
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -11,14 +18,14 @@
         {% endif %}
         <div class="jumbotron">
             {% if request.session.access_token %}
-                <h2>Success! Spotify account connected.</h2>
-                <p class="lead">UNDER CONSTRUCTION</p>
+                <h2>Success!</h2>
+                <p class="lead">Connected to the Spotify account <strong>{{ request.session.username }}</strong></p>
             {% else %}
                 <h2>Shuffle</h2>
                 <p class="lead">This website will allow you to shuffle your playlists with a randomizing algorithm that
                     shuffles much better than the garbage "shuffle" algorithm Spotify uses by default.</p>
-                <a class="btn btn-lg btn-primary" href="{% url 'authorize' %}" role="button">Login using Spotify
-                    &raquo;</a>
+                <a class="btn btn-lg btn-primary" href="{% url 'authorize' %}" role="button">
+                    <i class="fa fa-spotify" aria-hidden="true"></i> Login using Spotify</a>
             {% endif %}
         </div>
     </div>
