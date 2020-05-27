@@ -18,8 +18,35 @@
         {% endif %}
         <div class="jumbotron">
             {% if request.session.access_token %}
-                <h2>Success!</h2>
-                <p class="lead">Connected to the Spotify account <strong>{{ request.session.username }}</strong></p>
+                <h3>Your Playlists</h3>
+                <div class="row">
+                    <div class="col-4">
+                        <div class="list-group" id="list-tab" role="tablist">
+                            {% for playlist in all_playlists %}
+                                <a class="list-group-item list-group-item-action"
+                                   data-toggle="list" role="tab"
+                                   href="#playlist_{{ forloop.counter }}"
+                                   title="{{ playlist.name }}">{{ playlist.name }}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-8">
+                        <div class="tab-content" id="nav-tabContent">
+                            {% for playlist in all_playlists %}
+                                <div class="tab-pane" id="playlist_{{ forloop.counter }}" role="tabpanel">
+                                    {{ playlist.name }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <form action="" method="post">
+                    {% csrf_token %}
+                    {{ form }}
+                    <input type="hidden" name="playlist_id" value="list-group-item.active">
+                    <input type="submit" class="btn btn-lg btn-light mt-5" value="Shuffle"/>
+                </form>
+                </div>
             {% else %}
                 <h2>Shuffle</h2>
                 <p class="lead">This website will allow you to shuffle your playlists with a randomizing algorithm that
@@ -27,6 +54,6 @@
                 <a class="btn btn-lg btn-primary" href="{% url 'authorize' %}" role="button">
                     <i class="fa fa-spotify" aria-hidden="true"></i> Login using Spotify</a>
             {% endif %}
-        </div>
+    </div>
     </div>
 {% endblock %}

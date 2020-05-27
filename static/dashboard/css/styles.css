@@ -1,13 +1,54 @@
 /* Show it is fixed to the top */
 body {
-  min-height: 75rem;
   padding-top: 4.5rem;
+  background-color: #303030;
+    font-family: Consolas, serif;
 }
 
 .btn-primary, .btn-primary:active, .btn-primary:focus, .btn-primary:target, .btn-primary:hover, .btn-primary:active:focus:hover {
   background-color: #1DB954;
+  /*background-color: #33312E; */
+}
+
+.list-group-item.active:hover {
+  color: #ffffff;
+}
+
+.list-group-item {
+    user-select: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .btn-lg {
   border: none;
+}
+
+.btn-light {
+    background-color: #EE6C4D;
+    color: #FFFFFF;
+}
+
+.btn-lg.text {
+  user-select: none;
+}
+
+.navbar-dark {
+  background-color: #515052;
+}
+
+.navbar-dark .navbar-brand {
+  color: #EE6C4D;
+  font-family: Consolas, serif;
+}
+
+
+.list-group-item-action.active {
+  background-color: #EE6C4D;
+  border: none;
+}
+
+.jumbotron {
+  background-color: #BFBFBF
 }
