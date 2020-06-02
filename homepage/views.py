@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect
 from django.http import QueryDict
+from django.contrib import messages
 from dotenv import load_dotenv
 import random
 import spotipy
 import requests
 import os
 import json
+import time
 
 from spotipy import SpotifyException
 
@@ -88,13 +90,15 @@ def login(request):
             return redirect(index)
         else:
             # error handling
-            return render(request, 'index.html', {'message': 'Error connecting Spotify account, please try again.'})
+            messages.error(request, 'Error connecting Spotify account, please try again.')
+            return render(request, 'index.html')
 
 
 def logout(request):
     # deletes the storage cookie
     request.session.flush()
-    return render(request, 'index.html', {'success_message': 'Logged out successfully.'})
+    messages.success(request, 'Logged out successfully.')
+    return render(request, 'index.html')
 
 
 def add_saved_tracks(saved_tracks, all_tracks):
@@ -146,16 +150,14 @@ def add_playlists(playlists, all_playlists):
 
 
 def playlist_shuffle(request):
+    start = time.process_time()
     try:
         sp = spotipy.Spotify(auth=request.session['access_token'])
     except SpotifyException as e:
         if e.http_status == 401:
             return redirect(authorize)
 
-    print('after auth')
-    print('before shuffle')
     playlist_id = request.POST.get('playlistSelection')
-    print(playlist_id)
     username = request.session['username']
 
     # ID and tracks of selected playlist
@@ -165,7 +167,6 @@ def playlist_shuffle(request):
     while playlist_tracks:
         sp.user_playlist_remove_all_occurrences_of_tracks(username, playlist_id, playlist_tracks[:100])
         playlist_tracks = playlist_tracks[100:]
-    print('during shuffle')
     # Shuffle list of saved songs
     track_ids = []
     all_tracks = get_saved_songs(sp)
@@ -173,10 +174,9 @@ def playlist_shuffle(request):
         track_ids.append(track['id'])
     random.shuffle(track_ids)
 
-    # Adds tracks to Daily playlist. Each request only sends up to index 100 and then removes those 100 tracks from
-    # the track_ids list. Loops until track_ids is empty.
     while track_ids:
         sp.user_playlist_add_tracks(username, playlist_id, track_ids[:100])
         track_ids = track_ids[100:]
-    print('after shuffle')
-    return render(request, 'index.html', {'shuffle_success_message': 'Playlist shuffled successfully!'})
+    print(time.process_time() - start)
+    messages.success(request, 'Playlist shuffled successfully.')
+    return redirect('dashboard')

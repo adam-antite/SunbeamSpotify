@@ -2,26 +2,15 @@
 
 {% block content %}
     <div>
-        {% if error_message %}
-            <div class="alert alert-danger" role="alert"> {{ error_message }}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        {% endif %}
-        {% if success_message %}
-            <div class="alert alert-success" role="alert"> {{ success_message }}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        {% endif %}
-        {% if shuffle_success_message %}
-            <div class="alert alert-success" role="alert"> {{ shuffle_success_message }}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
+        {% if messages %}
+            {% for message in messages %}
+                <div {% if message.tags %} class="alert alert-{{ message.tags }} fade show" {% endif %} role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endfor %}
         {% endif %}
         {% if request.session.access_token %}
             <div class="container align-content-center">
