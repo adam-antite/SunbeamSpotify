@@ -1,24 +1,13 @@
 /* Show it is fixed to the top */
 body {
   padding-top: 4.5rem;
-  background-color: #303030;
+    background-color: #FF;
     font-family: Consolas, serif;
 }
 
 .btn-primary, .btn-primary:active, .btn-primary:focus, .btn-primary:target, .btn-primary:hover, .btn-primary:active:focus:hover {
   background-color: #1DB954;
   /*background-color: #33312E; */
-}
-
-.list-group-item.active:hover {
-  color: #ffffff;
-}
-
-.list-group-item {
-    user-select: none;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
 .btn-lg {
@@ -41,14 +30,4 @@ body {
 .navbar-dark .navbar-brand {
   color: #EE6C4D;
   font-family: Consolas, serif;
-}
-
-
-.list-group-item-action.active {
-  background-color: #EE6C4D;
-  border: none;
-}
-
-.jumbotron {
-  background-color: #BFBFBF
 }

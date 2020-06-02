@@ -16,44 +16,32 @@
                 </button>
             </div>
         {% endif %}
-        <div class="jumbotron">
-            {% if request.session.access_token %}
-                <h3>Your Playlists</h3>
-                <div class="row">
-                    <div class="col-4">
-                        <div class="list-group" id="list-tab" role="tablist">
-                            {% for playlist in all_playlists %}
-                                <a class="list-group-item list-group-item-action"
-                                   data-toggle="list" role="tab"
-                                   href="#playlist_{{ forloop.counter }}"
-                                   title="{{ playlist.name }}">{{ playlist.name }}</a>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    <div class="col-8">
-                        <div class="tab-content" id="nav-tabContent">
-                            {% for playlist in all_playlists %}
-                                <div class="tab-pane" id="playlist_{{ forloop.counter }}" role="tabpanel">
-                                    {{ playlist.name }}
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-                <form action="" method="post">
+        {% if shuffle_success_message %}
+            <div class="alert alert-success" role="alert"> {{ shuffle_success_message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endif %}
+        {% if request.session.access_token %}
+            <div class="container align-content-center">
+                <form class="form" method="POST" action="{% url 'playlist_shuffle' %}">
                     {% csrf_token %}
-                    {{ form }}
-                    <input type="hidden" name="playlist_id" value="list-group-item.active">
-                    <input type="submit" class="btn btn-lg btn-light mt-5" value="Shuffle"/>
+                    <select class="form-control align-content-center mb-3"
+                            id="playlistSelect" name="playlistSelection" style="width:350px">
+                        {% for playlist in all_playlists %}
+                            <option value="{{ playlist.id }}">{{ playlist.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-primary">Shuffle</button>
                 </form>
-                </div>
-            {% else %}
-                <h2>Shuffle</h2>
-                <p class="lead">This website will allow you to shuffle your playlists with a randomizing algorithm that
-                    shuffles much better than the garbage "shuffle" algorithm Spotify uses by default.</p>
-                <a class="btn btn-lg btn-primary" href="{% url 'authorize' %}" role="button">
-                    <i class="fa fa-spotify" aria-hidden="true"></i> Login using Spotify</a>
-            {% endif %}
-    </div>
+            </div>
+        {% else %}
+            <h2>Shuffle</h2>
+            <p class="lead">This website will allow you to shuffle your playlists with a randomizing algorithm that
+                shuffles much better than the garbage "shuffle" algorithm Spotify uses by default.</p>
+            <a class="btn btn-lg btn-primary" href="{% url 'authorize' %}" role="button">
+                <i class="fa fa-spotify" aria-hidden="true"></i> Login using Spotify</a>
+        {% endif %}
     </div>
 {% endblock %}

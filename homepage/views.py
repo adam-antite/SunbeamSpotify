@@ -145,8 +145,17 @@ def add_playlists(playlists, all_playlists):
         all_playlists.append(item)
 
 
-def playlist_shuffle(sp, request):
-    playlist_id = request.POST['playlist_id']
+def playlist_shuffle(request):
+    try:
+        sp = spotipy.Spotify(auth=request.session['access_token'])
+    except SpotifyException as e:
+        if e.http_status == 401:
+            return redirect(authorize)
+
+    print('after auth')
+    print('before shuffle')
+    playlist_id = request.POST.get('playlistSelection')
+    print(playlist_id)
     username = request.session['username']
 
     # ID and tracks of selected playlist
@@ -156,7 +165,7 @@ def playlist_shuffle(sp, request):
     while playlist_tracks:
         sp.user_playlist_remove_all_occurrences_of_tracks(username, playlist_id, playlist_tracks[:100])
         playlist_tracks = playlist_tracks[100:]
-
+    print('during shuffle')
     # Shuffle list of saved songs
     track_ids = []
     all_tracks = get_saved_songs(sp)
@@ -169,3 +178,5 @@ def playlist_shuffle(sp, request):
     while track_ids:
         sp.user_playlist_add_tracks(username, playlist_id, track_ids[:100])
         track_ids = track_ids[100:]
+    print('after shuffle')
+    return render(request, 'index.html', {'shuffle_success_message': 'Playlist shuffled successfully!'})
