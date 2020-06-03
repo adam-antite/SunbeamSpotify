@@ -1,36 +1,59 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    {% load static %}
     <div>
-        {% if messages %}
-            {% for message in messages %}
-                <div {% if message.tags %} class="alert alert-{{ message.tags }} fade show" {% endif %} role="alert">
-                    {{ message }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            {% endfor %}
-        {% endif %}
         {% if request.session.access_token %}
-            <div class="container align-content-center">
-                <form class="form" method="POST" action="{% url 'playlist_shuffle' %}">
-                    {% csrf_token %}
-                    <select class="form-control align-content-center mb-3"
-                            id="playlistSelect" name="playlistSelection" style="width:350px">
-                        {% for playlist in all_playlists %}
-                            <option value="{{ playlist.id }}">{{ playlist.name }}</option>
-                        {% endfor %}
-                    </select>
-                    <button type="submit" class="btn btn-primary">Shuffle</button>
-                </form>
+            <div class="container h-100">
+                <div class="row h-100 align-items-center justify-content-center text-center">
+                    <div class="col-lg-10 align-self-end">
+                        <h2 class="text-uppercase text-black bold">Sunbeam</h2>
+                        <hr class="divider my-4"/>
+                    </div>
+                    <div class="col-lg-8 align-self-baseline">
+                        <p class="text-white-75 font-weight-light mb-3">Select a playlist below, and then click the
+                            shuffle button.</p>
+                        <form class="form" method="POST" action="{% url 'playlist_shuffle' %}">
+                            {% csrf_token %}
+                            <select class="form-control mb-3" id="playlistSelect" name="playlistSelection">
+                                <option selected disabled>-- Select a playlist --</option>
+                                {% for playlist in all_playlists %}
+                                    <option value="{{ playlist.id }}">{{ playlist.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" class="btn btn-primary btn-lg mb-3">Shuffle</button>
+                        </form>
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div {% if message.tags %} class="alert alert-{{ message.tags }} fade show" role="alert"
+                                                           id="alert" {% endif %}>
+                                    {{ message }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         {% else %}
-            <h2>Shuffle</h2>
-            <p class="lead">This website will allow you to shuffle your playlists with a randomizing algorithm that
-                shuffles much better than the garbage "shuffle" algorithm Spotify uses by default.</p>
-            <a class="btn btn-lg btn-primary" href="{% url 'authorize' %}" role="button">
-                <i class="fa fa-spotify" aria-hidden="true"></i> Login using Spotify</a>
+            <div class="container h-100">
+                <div class="row h-100 align-items-center justify-content-center text-center">
+                    <div class="col-lg-10 align-self-end">
+                        <h1 class="text-uppercase text-white font-weight-bold">Sunbeam</h1>
+                        <hr class="divider my-4"/>
+                    </div>
+                    <div class="col-lg-8 align-self-baseline">
+                        <p class="text-white-75 font-weight-light mb-5">This site allows you to shuffle playlists
+                            or your entire songs library into a random order. This will allow you to listen to songs
+                            you might have forgotten you had in your library!</p>
+                        <a class="btn btn-primary btn-lg" href="{% url 'authorize' %}" role="button">
+                            <i class="fa fa-spotify" aria-hidden="true"></i> Login using Spotify</a>
+                    </div>
+                </div>
+            </div>
         {% endif %}
     </div>
+    <script src="{% static 'dashboard/js/app.js' %}"></script>
 {% endblock %}

@@ -1,17 +1,19 @@
 /* Show it is fixed to the top */
 body {
-  padding-top: 4.5rem;
-    background-color: #FF;
-    font-family: Consolas, serif;
+    padding-top: 4.5rem;
+    background-color: gray;
+    background-size: cover;
+    background-repeat: no-repeat;
+    font-family: Helvetica Neue, sans-serif;
 }
 
 .btn-primary, .btn-primary:active, .btn-primary:focus, .btn-primary:target, .btn-primary:hover, .btn-primary:active:focus:hover {
-  background-color: #1DB954;
-  /*background-color: #33312E; */
+    background-color: #1DB954;
+    /*background-color: #33312E; */
 }
 
 .btn-lg {
-  border: none;
+    border: none;
 }
 
 .btn-light {
@@ -20,14 +22,5 @@ body {
 }
 
 .btn-lg.text {
-  user-select: none;
-}
-
-.navbar-dark {
-  background-color: #515052;
-}
-
-.navbar-dark .navbar-brand {
-  color: #EE6C4D;
-  font-family: Consolas, serif;
+    user-select: none;
 }
