@@ -7,18 +7,26 @@ body {
     font-family: Helvetica Neue, sans-serif;
 }
 
-.btn-primary, .btn-primary:active, .btn-primary:focus, .btn-primary:target, .btn-primary:hover, .btn-primary:active:focus:hover {
+#loginButton, #loginButton:active, #loginButton:focus, #loginButton:target, #loginButton:hover, #loginButton:active:focus:hover {
     background-color: #1DB954;
-    /*background-color: #33312E; */
 }
 
-.btn-lg {
+.btn-lg, .btn-lg:active, .btn-lg:focus, .btn-lg:active:focus {
     border: none;
+    background-color: #F1873B;
 }
 
-.btn-light {
-    background-color: #EE6C4D;
-    color: #FFFFFF;
+.btn-primary:active:hover:focus, .btn-primary:focus, .btn-primary:active:focus:not(:hover) {
+    background-color: #F1873B;
+}
+
+.btn-lg:hover {
+    background-color: #EE6D11;
+}
+
+.btn-lg:disabled, .btn-lg:disabled:hover {
+    background-color: darkgray;
+    pointer-events: none;
 }
 
 .btn-lg.text {

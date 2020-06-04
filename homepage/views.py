@@ -89,6 +89,7 @@ def login(request):
             user_response_json = json.loads(user_response.text)
             request.session['username'] = user_response_json['display_name']
             request.session['user_id'] = user_response_json['id']
+            print(request.session['username'])
             return redirect(index)
         else:
             # error handling
@@ -99,8 +100,7 @@ def login(request):
 def logout(request):
     # deletes the storage cookie
     request.session.flush()
-    messages.success(request, 'Logged out successfully.')
-    return render(request, 'index.html')
+    return redirect(index)
 
 
 def add_saved_tracks(saved_tracks, all_tracks):
@@ -152,14 +152,14 @@ def add_playlists(playlists, all_playlists):
 
 
 def playlist_shuffle(request):
-    start = time.process_time()
+    start_time = time.process_time()
     try:
         sp = spotipy.Spotify(auth=request.session['access_token'])
     except SpotifyException as e:
         if e.http_status == 401:
             return redirect(authorize)
 
-    playlist_id = request.POST.get('playlistSelection')
+    playlist_id = request.POST.get('shuffleSelection')
     username = request.session['username']
 
     # ID and tracks of selected playlist
@@ -178,20 +178,20 @@ def playlist_shuffle(request):
         sp.user_playlist_add_tracks(username, playlist_id, playlist_tracks_copy[:100])
         playlist_tracks_copy = playlist_tracks_copy[100:]
 
-    print(time.process_time() - start)
+    print('Playlist shuffle time elapsed: ', (time.process_time() - start_time))
     messages.success(request, 'Playlist shuffled successfully.')
     return redirect('dashboard')
 
 
 def daily_playlist(request):
-    start = time.process_time()
+    start_time = time.process_time()
     try:
         sp = spotipy.Spotify(auth=request.session['access_token'])
     except SpotifyException as e:
         if e.http_status == 401:
             return redirect(authorize)
 
-    playlist_id = request.POST.get('playlistSelection')
+    playlist_id = request.POST.get('shuffleSelection')
     username = request.session['username']
 
     # ID and tracks of selected playlist
@@ -212,6 +212,6 @@ def daily_playlist(request):
     while track_ids:
         sp.user_playlist_add_tracks(username, playlist_id, track_ids[:100])
         track_ids = track_ids[100:]
-    print(time.process_time() - start)
+    print('Daily playlist creation time elapsed: ', (time.process_time() - start_time))
     messages.success(request, 'Daily playlist created successfully.')
     return redirect('dashboard')

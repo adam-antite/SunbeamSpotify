@@ -1,3 +1,9 @@
-setTimeout(function () {
-    $('#alert-success').alert('close');
-}, 2000);
+function shuffleButtonDisabler() {
+    let button = document.getElementById('shuffleButton');
+    button.disabled = false;
+}
+
+function createDailyButtonDisabler() {
+    let button = document.getElementById('createDailyButton');
+    button.disabled = false;
+}
