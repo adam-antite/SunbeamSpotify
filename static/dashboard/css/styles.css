@@ -1,10 +1,26 @@
 /* Show it is fixed to the top */
 body {
     padding-top: 4.5rem;
-    background-color: gray;
+    background-color: #444444;
     background-size: cover;
     background-repeat: no-repeat;
     font-family: Helvetica Neue, sans-serif;
+}
+
+p {
+    color: white;
+}
+
+hr {
+    background-color: gray;
+}
+
+#bootstrap, #django, #spotipy {
+    color: #F1873B;
+}
+
+.navbar-dark {
+    background-color: #2d2d2d;
 }
 
 #loginButton, #loginButton:active, #loginButton:focus, #loginButton:target, #loginButton:hover, #loginButton:active:focus:hover {
