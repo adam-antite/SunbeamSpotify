@@ -7,12 +7,12 @@
             <div class="container h-100">
                 <div class="row h-100 align-items-center justify-content-center text-center">
                     <div class="col-lg-10 align-self-end">
-                        <h2 class="text-uppercase text-black bold">Sunbeam</h2>
+                        <p class="text-white-75 font-weight-light mb-3">Select a playlist below, and then click the
+                            shuffle button. Alternatively, click the Daily button to create a randomized playlist
+                            that includes your whole library of songs.</p>
                         <hr class="divider my-4"/>
                     </div>
                     <div class="col-lg-8 align-self-baseline">
-                        <p class="text-white-75 font-weight-light mb-3">Select a playlist below, and then click the
-                            shuffle button.</p>
                         <form class="form" method="POST" action="{% url 'playlist_shuffle' %}">
                             {% csrf_token %}
                             <select class="form-control mb-3" id="playlistSelect" name="playlistSelection">
@@ -21,7 +21,17 @@
                                     <option value="{{ playlist.id }}">{{ playlist.name }}</option>
                                 {% endfor %}
                             </select>
-                            <button type="submit" class="btn btn-primary btn-lg mb-3">Shuffle</button>
+                            <button type="submit" class="btn btn-primary btn-lg mb-3" id="shuffle">Shuffle</button>
+                        </form>
+                        <form class="form" method="POST" action="{% url 'daily_playlist' %}">
+                            {% csrf_token %}
+                            <select class="form-control mb-3" id="playlistSelectDaily" name="playlistSelection">
+                                <option selected disabled>-- Select a playlist --</option>
+                                {% for playlist in all_playlists %}
+                                    <option value="{{ playlist.id }}">{{ playlist.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" class="btn btn-primary btn-lg mb-3" id="createDaily">Create Daily</button>
                         </form>
                         {% if messages %}
                             {% for message in messages %}

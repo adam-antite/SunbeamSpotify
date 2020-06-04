@@ -164,6 +164,7 @@ def playlist_shuffle(request):
 
     # ID and tracks of selected playlist
     playlist_tracks = get_playlist_track_ids(sp, playlist_id)
+    playlist_tracks_copy = playlist_tracks
 
     # Clear songs from playlist
     while playlist_tracks:
@@ -171,14 +172,12 @@ def playlist_shuffle(request):
         playlist_tracks = playlist_tracks[100:]
 
     # Shuffle list of songs
-    track_ids = []
-    for track in playlist_tracks:
-        track_ids.append(track['id'])
-    random.shuffle(track_ids)
+    random.shuffle(playlist_tracks_copy)
 
-    while track_ids:
-        sp.user_playlist_add_tracks(username, playlist_id, track_ids[:100])
-        track_ids = track_ids[100:]
+    while playlist_tracks_copy:
+        sp.user_playlist_add_tracks(username, playlist_id, playlist_tracks_copy[:100])
+        playlist_tracks_copy = playlist_tracks_copy[100:]
+
     print(time.process_time() - start)
     messages.success(request, 'Playlist shuffled successfully.')
     return redirect('dashboard')
@@ -202,6 +201,7 @@ def daily_playlist(request):
     while playlist_tracks:
         sp.user_playlist_remove_all_occurrences_of_tracks(username, playlist_id, playlist_tracks[:100])
         playlist_tracks = playlist_tracks[100:]
+
     # Shuffle list of saved songs
     track_ids = []
     all_tracks = get_saved_songs(sp)
