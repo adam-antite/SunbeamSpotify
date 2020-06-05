@@ -1,7 +1,7 @@
 /* Show it is fixed to the top */
 body {
     padding-top: 4.5rem;
-    background-color: #444444;
+    background-color: #333333;
     background-size: cover;
     background-repeat: no-repeat;
     font-family: Helvetica Neue, sans-serif;
@@ -15,8 +15,32 @@ hr {
     background-color: gray;
 }
 
+
 #bootstrap, #django, #spotipy {
     color: #F1873B;
+}
+
+.nav-pills .pill-1 .nav-link:not(.active) {
+    background-color: #555555;
+    color: #ffffff;
+}
+
+.nav-pills .pill-1 .nav-link {
+    background-color: #F1873B;
+}
+
+.nav-pills .pill-2 .nav-link:not(.active) {
+    background-color: #555555;
+    color: #ffffff;
+}
+
+.nav-pills .pill-2 .nav-link {
+    background-color: #F1873B;
+}
+
+#content {
+    background-color: #444444;
+    border-radius: 25px;
 }
 
 .navbar-dark {
