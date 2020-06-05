@@ -25,8 +25,9 @@ hr {
     color: #ffffff;
 }
 
-.nav-pills .pill-1 .nav-link {
+.nav-pills .pill-1 .nav-link, .nav-pills .pill-2 .nav-link {
     background-color: #F1873B;
+    color: black;
 }
 
 .nav-pills .pill-2 .nav-link:not(.active) {
@@ -34,8 +35,9 @@ hr {
     color: #ffffff;
 }
 
-.nav-pills .pill-2 .nav-link {
-    background-color: #F1873B;
+
+#createDailyButton, #shuffleButton {
+    color: black;
 }
 
 #content {

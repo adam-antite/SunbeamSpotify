@@ -1,3 +1,5 @@
+import datetime
+
 from django.shortcuts import render, redirect
 from django.http import QueryDict
 from django.contrib import messages
@@ -52,7 +54,7 @@ def authorize(request):
             'client_id': os.environ.get('CLIENT_ID'),
             'response_type': 'code',
             'redirect_uri': 'http://127.0.0.1:8000/login',
-            'scope': 'playlist-read-private playlist-modify-private user-library-modify user-library-read'
+            'scope': 'playlist-read-private playlist-modify-public playlist-modify-private user-library-modify user-library-read'
         }
 
         q = QueryDict('', mutable=True)
@@ -191,27 +193,29 @@ def daily_playlist(request):
         if e.http_status == 401:
             return redirect(authorize)
 
-    playlist_id = request.POST.get('shuffleSelection')
     username = request.session['username']
+    user_id = request.session['user_id']
 
-    # ID and tracks of selected playlist
-    playlist_tracks = get_playlist_track_ids(sp, playlist_id)
+    # Create new Daily playlist using local time
+    date = datetime.date.today()
+    playlist_name = 'Daily ' + date.strftime("%Y-%m-%d")
+    response = sp.user_playlist_create(user_id, playlist_name, public=False)
+    print(response)
+    playlist_id = response['id']
+    print(playlist_id)
 
-    # Clear songs from playlist
-    while playlist_tracks:
-        sp.user_playlist_remove_all_occurrences_of_tracks(username, playlist_id, playlist_tracks[:100])
-        playlist_tracks = playlist_tracks[100:]
-
-    # Shuffle list of saved songs
+    # Get list of saved songs and shuffle
     track_ids = []
     all_tracks = get_saved_songs(sp)
     for track in all_tracks:
         track_ids.append(track['id'])
     random.shuffle(track_ids)
 
+    # Add shuffled songs to playlist
     while track_ids:
         sp.user_playlist_add_tracks(username, playlist_id, track_ids[:100])
         track_ids = track_ids[100:]
+
     print('Daily playlist creation time elapsed: ', (time.process_time() - start_time))
     messages.success(request, 'Daily playlist created successfully.')
     return redirect('dashboard')
