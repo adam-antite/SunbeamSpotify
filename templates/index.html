@@ -39,9 +39,8 @@
                                     dropdown menu and press the button to shuffle it into a random order.</p>
                                 <form class="form mt-4 mr-3 ml-3" method="POST" action="{% url 'playlist_shuffle' %}">
                                     {% csrf_token %}
-                                    <select class="form-control mb-3" id="playlistSelect" name="shuffleSelection"
+                                    <select class="selectpicker form-control mb-4" title="--- Select a playlist ---" id="playlistSelect" name="shuffleSelection"
                                             onchange="shuffleButtonDisabler()">
-                                        <option selected disabled>-- Select a playlist --</option>
                                         {% for playlist in all_playlists %}
                                             <option value="{{ playlist.id }}">{{ playlist.name }}</option>
                                         {% endfor %}
@@ -82,5 +81,5 @@
             </div>
         {% endif %}
     </div>
-    <script src="{% static 'dashboard/js/app.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dashboard/js/app.js' %}" crossorigin="anonymous"></script>
 {% endblock %}

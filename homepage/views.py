@@ -164,7 +164,7 @@ def playlist_shuffle(request):
     playlist_id = request.POST.get('shuffleSelection')
     username = request.session['username']
 
-    # ID and tracks of selected playlist
+    # Get ID and songs of selected playlist
     playlist_tracks = get_playlist_track_ids(sp, playlist_id)
     playlist_tracks_copy = playlist_tracks
 
@@ -172,6 +172,7 @@ def playlist_shuffle(request):
     while playlist_tracks:
         sp.user_playlist_remove_all_occurrences_of_tracks(username, playlist_id, playlist_tracks[:100])
         playlist_tracks = playlist_tracks[100:]
+    playlist_tracks.clear()
 
     # Shuffle list of songs
     random.shuffle(playlist_tracks_copy)
@@ -198,11 +199,9 @@ def daily_playlist(request):
 
     # Create new Daily playlist using local time
     date = datetime.date.today()
-    playlist_name = 'Daily ' + date.strftime("%Y-%m-%d")
+    playlist_name = 'Sunbeam ' + date.strftime("%Y-%m-%d")
     response = sp.user_playlist_create(user_id, playlist_name, public=False)
-    print(response)
     playlist_id = response['id']
-    print(playlist_id)
 
     # Get list of saved songs and shuffle
     track_ids = []
