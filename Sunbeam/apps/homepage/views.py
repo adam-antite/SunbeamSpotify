@@ -91,7 +91,6 @@ def login(request):
             user_response_json = json.loads(user_response.text)
             request.session['username'] = user_response_json['display_name']
             request.session['user_id'] = user_response_json['id']
-            print(request.session['username'])
             return redirect(index)
         else:
             # error handling
@@ -197,7 +196,7 @@ def daily_playlist(request):
     username = request.session['username']
     user_id = request.session['user_id']
 
-    # Create new Daily playlist using local time
+    # Create new Daily playlist
     date = datetime.date.today()
     playlist_name = 'Sunbeam ' + date.strftime("%Y-%m-%d")
     response = sp.user_playlist_create(user_id, playlist_name, public=False)
