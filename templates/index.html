@@ -3,7 +3,7 @@
 {% block content %}
     {% load static %}
     <div>
-        {% if request.session.access_token %}
+        {% if request.user.is_authenticated %}
             {% if messages %}
                 {% for message in messages %}
                     <div {% if message.tags %} class="alert alert-{{ message.tags }} fade show" role="alert"

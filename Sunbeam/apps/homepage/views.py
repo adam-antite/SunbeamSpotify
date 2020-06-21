@@ -4,6 +4,8 @@ from django.shortcuts import render, redirect
 from django.http import QueryDict
 from django.contrib import messages
 from dotenv import load_dotenv
+from django.contrib.auth import authenticate, login, logout
+from Sunbeam.apps.users.models import CustomUser
 import random
 import spotipy
 import requests
@@ -17,7 +19,7 @@ load_dotenv()
 
 
 def index(request):
-    if request.session.__contains__('access_token'):
+    if request.user.is_authenticated:
         return redirect(dashboard)
     else:
         return render(request, 'index.html')
@@ -25,7 +27,7 @@ def index(request):
 
 def dashboard(request):
     try:
-        sp = spotipy.Spotify(auth=request.session['access_token'])
+        sp = spotipy.Spotify(auth=request.user.get_access_token())
         playlists = get_playlists(sp)
         return render(request, 'index.html', {'all_playlists': playlists})
     except SpotifyException as e:
@@ -36,18 +38,19 @@ def dashboard(request):
 
 
 def authorize(request):
-    # if user has a cookie with a token, refresh it
-    if request.session.__contains__('access_token') & request.session.__contains__('refresh_token'):
+    # Refresh access token of user
+    if request.user.is_authenticated:
         params = {
             'grant_type': 'refresh_token',
-            'refresh_token': request.session.__getitem__('refresh_token'),
+            'refresh_token': request.user.get_refresh_token(),
             'client_id': os.environ.get('CLIENT_ID'),
             'client_secret': os.environ.get('CLIENT_SECRET')
         }
         response = requests.post('https://accounts.spotify.com/api/token', data=params)
         if response.status_code == 200:
+            # Success
             response_json = json.loads(response.text)
-            request.session['access_token'] = response_json['access_token']
+            request.user.access_token = response_json['access_token']
         return redirect(index)
     else:
         params = {
@@ -63,7 +66,7 @@ def authorize(request):
         return redirect(url)
 
 
-def login(request):
+def api_login(request):
     # Return to homepage if user declines authorization
     if request.GET.__contains__('error'):
         return render(request, 'index.html', {'error_message': 'Error connecting Spotify account, please try again.'})
@@ -78,19 +81,35 @@ def login(request):
 
         response = requests.post('https://accounts.spotify.com/api/token', data=params)
         if response.status_code == 200:
+            # Success
             # parse response text into addressable JSON
             response_json = json.loads(response.text)
 
-            # write tokens to cookie storage
-            request.session['access_token'] = response_json['access_token']
-            request.session['refresh_token'] = response_json['refresh_token']
-
-            # get username and user_id from API and write to cookie storage
-            header = {'Authorization': 'Authorization: Bearer ' + request.session['access_token']}
+            # get user info from API
+            header = {'Authorization': 'Authorization: Bearer ' + response_json['access_token']}
             user_response = requests.get('https://api.spotify.com/v1/me', headers=header)
             user_response_json = json.loads(user_response.text)
-            request.session['username'] = user_response_json['display_name']
-            request.session['user_id'] = user_response_json['id']
+
+            # Check if User exists in database
+            user = authenticate(request,
+                                spotify_user_id=user_response_json['id'],
+                                spotify_username=user_response_json['display_name']
+                                )
+            if user is not None:
+                # User exists
+                login(request, user)
+                user.last_login = datetime.datetime.now()
+            else:
+                # Create new user
+                user = CustomUser.objects.create_user(spotify_user_id=user_response_json['id'],
+                                                      spotify_username=user_response_json['display_name'],
+                                                      access_token=response_json['access_token'],
+                                                      refresh_token=response_json['refresh_token'],
+                                                      playlist_time=None,
+                                                      last_login=None
+                                                      )
+                login(request, user)
+                user.last_login = datetime.datetime.now()
             return redirect(index)
         else:
             # error handling
@@ -98,9 +117,8 @@ def login(request):
             return render(request, 'index.html')
 
 
-def logout(request):
-    # deletes the storage cookie
-    request.session.flush()
+def logout_view(request):
+    logout(request)
     return redirect(index)
 
 
@@ -155,13 +173,13 @@ def add_playlists(playlists, all_playlists):
 def playlist_shuffle(request):
     start_time = time.process_time()
     try:
-        sp = spotipy.Spotify(auth=request.session['access_token'])
+        sp = spotipy.Spotify(auth=request.user.get_access_token())
     except SpotifyException as e:
         if e.http_status == 401:
             return redirect(authorize)
 
     playlist_id = request.POST.get('shuffleSelection')
-    username = request.session['username']
+    username = request.user.get_spotify_username()
 
     # Get ID and songs of selected playlist
     playlist_tracks = get_playlist_track_ids(sp, playlist_id)
@@ -188,13 +206,13 @@ def playlist_shuffle(request):
 def daily_playlist(request):
     start_time = time.process_time()
     try:
-        sp = spotipy.Spotify(auth=request.session['access_token'])
+        sp = spotipy.Spotify(auth=request.user.get_access_token())
     except SpotifyException as e:
         if e.http_status == 401:
             return redirect(authorize)
 
-    username = request.session['username']
-    user_id = request.session['user_id']
+    username = request.user.get_spotify_username()
+    user_id = request.user.get_spotify_user_id()
 
     # Create new Daily playlist
     date = datetime.date.today()
